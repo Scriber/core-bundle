@@ -2,6 +2,7 @@
 namespace Scriber\Bundle\CoreBundle\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Scriber\Bundle\CoreBundle\Data\UserData;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
@@ -79,6 +80,8 @@ class UserManager
         $user->setPassword(
             $this->passwordEncoder->encodePassword($password, '')
         );
+
+        $this->em->flush();
     }
 
     /**
@@ -90,5 +93,38 @@ class UserManager
     public function checkPassword($encodedPassword, $password): bool
     {
         return $this->passwordEncoder->isPasswordValid($encodedPassword, $password, '');
+    }
+
+    /**
+     * @param UserData $data
+     *
+     * @return User
+     */
+    public function createUser(UserData $data): User
+    {
+        $user = new User($data->email, $data->name);
+
+        $this->em->persist($user);
+        $this->em->flush();
+
+        return $user;
+    }
+
+    /**
+     * @param User $user
+     * @param string[] $roles
+     */
+    public function updateRoles(User $user, array $roles): void
+    {
+        $user->setRoles($roles);
+        $this->em->flush();
+    }
+
+    /**
+     * \EntityManagerInterface::flush forwarder
+     */
+    public function save(): void
+    {
+        $this->em->flush();
     }
 }

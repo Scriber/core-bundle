@@ -4,6 +4,7 @@ namespace Scriber\Bundle\CoreBundle\Tests\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
+use Scriber\Bundle\CoreBundle\Data\UserData;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
 use Scriber\Bundle\CoreBundle\User\UserManager;
@@ -165,6 +166,10 @@ class UserManagerTest extends TestCase
             ->method('setPassword')
             ->with($encodedPassword);
 
+        $this->em
+            ->expects(static::once())
+            ->method('flush');
+
         $manager = new UserManager($this->em, $this->encoderFactory);
         $manager->updatePassword($user, $password);
     }
@@ -184,5 +189,65 @@ class UserManagerTest extends TestCase
         $result = $manager->checkPassword($encodedPassword, $password);
 
         static::assertTrue($result);
+    }
+
+    public function testCreateUser()
+    {
+        $email = 'test@example.com';
+        $name = 'John Doe';
+
+        $data = new UserData();
+        $data->email = $email;
+        $data->name = $name;
+
+
+
+        $this->em
+            ->expects(static::once())
+            ->method('persist')
+            ->with(static::callback(function ($v) use ($data) {
+                return $v instanceof User &&
+                       $v->getEmail() === $data->email &&
+                       $v->getName() === $data->name;
+            }));
+
+        $this->em
+            ->expects(static::once())
+            ->method('flush');
+
+        $manager = new UserManager($this->em, $this->encoderFactory);
+        $user = $manager->createUser($data);
+
+        static::assertInstanceOf(User::class, $user);
+        static::assertEquals($user->getEmail(), $email);
+        static::assertEquals($user->getName(), $name);
+    }
+
+    public function testUpdateRoles()
+    {
+        $user = $this->createMock(User::class);
+        $roles = ['ROLE_TEST'];
+
+        $user
+            ->expects(static::once())
+            ->method('setRoles')
+            ->with($roles);
+
+        $this->em
+            ->expects(static::once())
+            ->method('flush');
+
+        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager->updateRoles($user, $roles);
+    }
+
+    public function testSave()
+    {
+        $this->em
+            ->expects(static::once())
+            ->method('flush');
+
+        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager->save();
     }
 }

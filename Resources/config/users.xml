@@ -17,6 +17,23 @@
         <service id="scriber_core.role_helper" class="Scriber\Bundle\CoreBundle\Security\RolesHelper">
             <argument>%security.role_hierarchy.roles%</argument>
         </service>
-    </services>
 
+        <!-- commands -->
+        <service id="scriber_core.command.user_add" class="Scriber\Bundle\CoreBundle\Command\UserAddCommand">
+            <argument type="service" id="scriber_core.user_manager" />
+            <argument type="service" id="rzeka_data_handler.handler" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="scriber_core.command.user_change_password" class="Scriber\Bundle\CoreBundle\Command\UserChangePasswordCommand">
+            <argument type="service" id="scriber_core.user_manager" />
+            <argument type="service" id="rzeka_data_handler.handler" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="scriber_core.command.user_roles" class="Scriber\Bundle\CoreBundle\Command\UserRolesCommand">
+            <argument type="service" id="scriber_core.user_manager" />
+            <tag name="console.command" />
+        </service>
+    </services>
 </container>
