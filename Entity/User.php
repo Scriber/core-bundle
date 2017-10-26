@@ -1,8 +1,6 @@
 <?php
 namespace Scriber\Bundle\CoreBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 class User
 {
     /**
