@@ -1,0 +1,43 @@
+{
+    "name": "scriber/core-bundle",
+    "description": "Core bundle for Scriber",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Piotr Rzeczkowski",
+            "email": "piotr@rzeka.net"
+        }
+    ],
+    "minimum-stability": "beta",
+    "autoload": {
+        "psr-4": {
+            "Scriber\\Bundle\\CoreBundle\\": ""
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Scriber\\Bundle\\CoreBundle\\Tests\\": "Tests/"
+        }
+    },
+    "require": {
+        "symfony/http-kernel": "^4.0",
+        "doctrine/orm": "^2.5",
+        "doctrine/doctrine-bundle": "^1.7",
+        "symfony/validator": "^4.0",
+        "symfony/security-bundle": "^4.0",
+        "rzeka/data-handler-bundle": "^1.1"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^6.4"
+    }
+}
