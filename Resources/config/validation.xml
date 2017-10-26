@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<constraint-mapping xmlns="http://symfony.com/schema/dic/constraint-mapping"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://symfony.com/schema/dic/constraint-mapping http://symfony.com/schema/dic/constraint-mapping/constraint-mapping-1.0.xsd">
+    <class name="Scriber\Bundle\CoreBundle\Data\UserData">
+        <constraint name="Scriber\Bundle\CoreBundle\Validator\Constraints\EmailExists">
+            <option name="groups">
+                <value>create</value>
+            </option>
+        </constraint>
+        <constraint name="Scriber\Bundle\CoreBundle\Validator\Constraints\EmailExists">
+            <option name="oldEmail">oldEmail</option>
+            <option name="groups">
+                <value>update</value>
+            </option>
+        </constraint>
+        <property name="name">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>create</value>
+                    <value>update</value>
+                </option>
+            </constraint>
+            <constraint name="Type">
+                <option name="type">string</option>
+                <option name="groups">
+                    <value>create</value>
+                    <value>update</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="email">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>create</value>
+                    <value>update</value>
+                </option>
+            </constraint>
+            <constraint name="Email">
+                <option name="groups">
+                    <value>create</value>
+                    <value>update</value>
+                </option>
+            </constraint>
+            <constraint name="Type">
+                <option name="type">string</option>
+                <option name="groups">
+                    <value>create</value>
+                    <value>update</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="password">
+            <constraint name="NotBlank">
+                <option name="groups">
+                    <value>password</value>
+                    <value>update-password</value>
+                </option>
+            </constraint>
+            <constraint name="Type">
+                <option name="type">string</option>
+                <option name="groups">
+                    <value>password</value>
+                    <value>update-password</value>
+                </option>
+            </constraint>
+            <constraint name="Length">
+                <option name="min">8</option>
+                <option name="groups">
+                    <value>password</value>
+                    <value>update-password</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="oldPassword">
+            <constraint name="Symfony\Component\Security\Core\Validator\Constraints\UserPassword">
+                <option name="payload">
+                    <value key="error">INVALID_PASSWORD</value>
+                </option>
+                <option name="groups">
+                    <value>update-password</value>
+                </option>
+            </constraint>
+        </property>
+    </class>
+</constraint-mapping>
