@@ -1,5 +1,5 @@
 <?php
-namespace Scriber\Bundle\CoreBundle\User\Response\MyAccount;
+namespace Scriber\Bundle\CoreBundle\Tests\User\Response\MyAccount;
 
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
@@ -20,7 +20,7 @@ class MyAccountResponseTest extends TestCase
         $email = 'test@example.com';
         $roles = ['ROLE_TEST'];
 
-        $expecterResult = [
+        $expectedResult = [
             'name' => $name,
             'email' => $email,
             'roles' => $roles
@@ -45,6 +45,6 @@ class MyAccountResponseTest extends TestCase
 
         $response = new MyAccountResponse($user);
 
-        static::assertEquals($expecterResult, $response->jsonSerialize());
+        static::assertEquals($expectedResult, $response->jsonSerialize());
     }
 }
