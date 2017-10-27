@@ -2,7 +2,7 @@
 namespace Scriber\Bundle\CoreBundle\Command;
 
 use Rzeka\DataHandler\DataHandler;
-use Scriber\Bundle\CoreBundle\Data\UserData;
+use Scriber\Bundle\CoreBundle\User\Data\CreateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,17 +46,15 @@ class UserAddCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $validationGroups = ['create'];
         $requestData = [
             'email' => $input->getArgument('email'),
             'name' => $input->getArgument('name')
         ];
+        $data = new CreateData();
 
-        $data = new UserData();
-
-        $result = $this->dataHandler->handle($requestData, $data, ['validation_groups' => $validationGroups]);
+        $result = $this->dataHandler->handle($requestData, $data);
         if ($result->isValid()) {
-            $user = $this->manager->createUser($data);
+            $this->manager->createUser($data);
             $output->writeln('<info>User created</info>');
         } else {
             $output->writeln(

@@ -2,9 +2,9 @@
 namespace Scriber\Bundle\CoreBundle\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Scriber\Bundle\CoreBundle\Data\UserData;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
+use Scriber\Bundle\CoreBundle\User\Data\CreateData;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
@@ -96,11 +96,11 @@ class UserManager
     }
 
     /**
-     * @param UserData $data
+     * @param CreateData $data
      *
      * @return User
      */
-    public function createUser(UserData $data): User
+    public function createUser(CreateData $data): User
     {
         $user = new User($data->email, $data->name);
 

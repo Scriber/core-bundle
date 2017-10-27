@@ -2,7 +2,7 @@
 namespace Scriber\Bundle\CoreBundle\Command;
 
 use Rzeka\DataHandler\DataHandler;
-use Scriber\Bundle\CoreBundle\Data\UserData;
+use Scriber\Bundle\CoreBundle\User\Data\ChangePasswordData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -53,9 +53,9 @@ class UserChangePasswordCommand extends Command
             'password' => $input->getArgument('password')
         ];
 
-        $data = new UserData();
+        $data = new ChangePasswordData();
         $result = $this->dataHandler->handle($requestData, $data, [
-            'validation_groups' => ['password']
+            'validation_groups' => ['manual']
         ]);
 
         if ($result->isValid()) {
