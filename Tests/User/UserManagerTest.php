@@ -240,6 +240,35 @@ class UserManagerTest extends TestCase
         $manager->updateRoles($user, $roles);
     }
 
+    public function testUpdateUser()
+    {
+        $email = 'test@example.com';
+        $name = 'John Doe';
+
+        $user = $this->createMock(User::class);
+
+        $data = new UpdateData($user);
+        $data->email = $email;
+        $data->name = $name;
+
+        $user
+            ->expects(static::once())
+            ->method('setName')
+            ->with($name);
+
+        $user
+            ->expects(static::once())
+            ->method('setEmail')
+            ->with($email);
+
+        $this->em
+            ->expects(static::once())
+            ->method('flush');
+
+        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager->updateUser($data);
+    }
+
     public function testSave()
     {
         $this->em
