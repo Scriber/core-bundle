@@ -7,7 +7,6 @@ use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UserAddCommand extends Command
@@ -42,7 +41,6 @@ class UserAddCommand extends Command
             ->setName('scriber:user:add')
             ->addArgument('email', InputArgument::REQUIRED)
             ->addArgument('name', InputArgument::REQUIRED)
-            ->addOption('password', null, InputOption::VALUE_OPTIONAL)
         ;
     }
 
@@ -54,21 +52,11 @@ class UserAddCommand extends Command
             'name' => $input->getArgument('name')
         ];
 
-        $password = $input->getOption('password');
-        if ($password) {
-            $requestData['password'] = $password;
-            $validationGroups[] = 'password';
-        }
-
         $data = new UserData();
 
         $result = $this->dataHandler->handle($requestData, $data, ['validation_groups' => $validationGroups]);
         if ($result->isValid()) {
             $user = $this->manager->createUser($data);
-
-            if ($data->password) {
-                $this->manager->updatePassword($user, $data->password);
-            }
             $output->writeln('<info>User created</info>');
         } else {
             $output->writeln(
