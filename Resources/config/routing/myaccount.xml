@@ -8,4 +8,12 @@
     <route id="scriber_core_admin_myaccount" path="/me" methods="GET">
         <default key="_controller">scriber_core.controller.admin_myaccount</default>
     </route>
+
+    <route id="scriber_core_admin_account_update" path="/me" methods="POST|PATCH">
+        <default key="_controller">scriber_core.controller.admin_myaccount_update</default>
+    </route>
+
+    <route id="scriber_core_admin_account_password" path="/me/password" methods="POST">
+        <default key="_controller">scriber_core.controller.admin_myaccount_password</default>
+    </route>
 </routes>
