@@ -8,4 +8,8 @@
     <import resource="auth.xml" prefix="api">
         <default key="_format">json</default>
     </import>
+
+    <import resource="myaccount.xml" prefix="api">
+        <default key="_format">json</default>
+    </import>
 </routes>

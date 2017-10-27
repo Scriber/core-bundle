@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
 use Scriber\Bundle\CoreBundle\User\Data\CreateData;
+use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
@@ -108,6 +109,18 @@ class UserManager
         $this->em->flush();
 
         return $user;
+    }
+
+    /**
+     * @param UpdateData $data
+     */
+    public function updateUser(UpdateData $data): void
+    {
+        $user = $data->getUser();
+        $user->setEmail($data->email);
+        $user->setName($data->name);
+
+        $this->em->flush();
     }
 
     /**
