@@ -3,6 +3,7 @@ namespace Scriber\Bundle\CoreBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Symfony\Component\Security\Core\Encoder\EncoderAwareInterface;
 
 class SecurityUserTest extends TestCase
