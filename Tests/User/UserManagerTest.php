@@ -4,9 +4,10 @@ namespace Scriber\Bundle\CoreBundle\Tests\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use PHPUnit\Framework\TestCase;
-use Scriber\Bundle\CoreBundle\Data\UserData;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
+use Scriber\Bundle\CoreBundle\User\Data\CreateData;
+use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
@@ -196,11 +197,9 @@ class UserManagerTest extends TestCase
         $email = 'test@example.com';
         $name = 'John Doe';
 
-        $data = new UserData();
+        $data = new CreateData();
         $data->email = $email;
         $data->name = $name;
-
-
 
         $this->em
             ->expects(static::once())

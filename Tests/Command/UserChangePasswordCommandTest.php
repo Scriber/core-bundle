@@ -5,9 +5,9 @@ use PHPUnit\Framework\TestCase;
 use Rzeka\DataHandler\DataHandler;
 use Rzeka\DataHandler\DataHandlerResult;
 use Scriber\Bundle\CoreBundle\Command\UserChangePasswordCommand;
-use Scriber\Bundle\CoreBundle\Data\UserData;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
+use Scriber\Bundle\CoreBundle\User\Data\ChangePasswordData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -94,8 +94,8 @@ class UserChangePasswordCommandTest extends TestCase
             ->method('handle')
             ->with(
                 $data,
-                static::isInstanceOf(UserData::class),
-                ['validation_groups' => ['password']]
+                static::isInstanceOf(ChangePasswordData::class),
+                ['validation_groups' => ['manual']]
             )
             ->willReturnCallback(function ($requestData, $data) use ($password, $dataResult) {
                 $data->password = $password;

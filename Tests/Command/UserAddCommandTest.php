@@ -5,8 +5,7 @@ use PHPUnit\Framework\TestCase;
 use Rzeka\DataHandler\DataHandler;
 use Rzeka\DataHandler\DataHandlerResult;
 use Scriber\Bundle\CoreBundle\Command\UserAddCommand;
-use Scriber\Bundle\CoreBundle\Data\UserData;
-use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\User\Data\CreateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -59,12 +58,6 @@ class UserAddCommandTest extends TestCase
             )
             ->willReturnSelf();
 
-        $mock
-            ->expects(static::once())
-            ->method('addOption')
-            ->with('password', null, 4)
-            ->willReturnSelf();
-
         $mock->configure();
     }
 
@@ -93,8 +86,7 @@ class UserAddCommandTest extends TestCase
             ->method('handle')
             ->with(
                 $data,
-                static::isInstanceOf(UserData::class),
-                ['validation_groups' => ['create']]
+                static::isInstanceOf(CreateData::class)
             )
             ->willReturnCallback(function ($requestData, $data) use ($dataResult) {
                 $data->email = $requestData['email'];
@@ -111,7 +103,7 @@ class UserAddCommandTest extends TestCase
             ->expects(static::once())
             ->method('createUser')
             ->with(static::callback(function ($user) use ($email, $name) {
-                return $user instanceof UserData &&
+                return $user instanceof CreateData &&
                        $user->email === $email &&
                        $user->name === $name;
             }));
@@ -170,70 +162,5 @@ class UserAddCommandTest extends TestCase
         $result = $mock->execute($input, $output);
 
         static::assertEquals(1, $result);
-    }
-
-    public function testExecuteWithPassword()
-    {
-        $email = 'test@example.com';
-        $name = 'John Doe';
-        $password = 'test';
-
-        $data = [
-            'email' => $email,
-            'name' => $name,
-            'password' => $password
-        ];
-
-        $input = $this->createMock(InputInterface::class);
-        $input
-            ->method('getArgument')
-            ->willReturnOnConsecutiveCalls($email, $name);
-
-        $input
-            ->expects(static::once())
-            ->method('getOption')
-            ->with('password')
-            ->willReturn($password);
-
-        $output = $this->createMock(OutputInterface::class);
-        $dataResult = $this->createMock(DataHandlerResult::class);
-        $user = $this->createMock(User::class);
-
-        $this->dataHandler
-            ->expects(static::once())
-            ->method('handle')
-            ->with(
-                $data,
-                static::isInstanceOf(UserData::class),
-                ['validation_groups' => ['create', 'password']]
-            )
-            ->willReturnCallback(function ($requestData, $data) use ($dataResult) {
-                $data->email = $requestData['email'];
-                $data->name = $requestData['name'];
-                $data->password = $requestData['password'];
-
-                return $dataResult;
-            });
-
-        $dataResult->expects(static::once())
-                   ->method('isValid')
-                   ->willReturn(true);
-
-        $this->manager
-            ->method('createUser')
-            ->willReturn($user);
-
-        $this->manager
-            ->expects(static::once())
-            ->method('updatePassword')
-            ->with($user, $password);
-
-        $output
-            ->expects(static::once())
-            ->method('writeln')
-            ->with(static::stringContains('User created'));
-
-        $command = new UserAddCommand($this->manager, $this->dataHandler);
-        $command->execute($input, $output);
     }
 }
