@@ -1,5 +1,5 @@
 <?php
-namespace Scriber\Bundle\CoreBundle\Security;
+namespace Scriber\Bundle\CoreBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
