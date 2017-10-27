@@ -4,6 +4,8 @@ namespace Scriber\Bundle\CoreBundle\Tests\Security;
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
+use Scriber\Bundle\CoreBundle\Security\SecurityUser;
+use Scriber\Bundle\CoreBundle\Security\UserFactory;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;

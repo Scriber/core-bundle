@@ -3,6 +3,7 @@ namespace Scriber\Bundle\CoreBundle\Tests\User\Response\MyAccount;
 
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\User\Response\MyAccount\MyAccountResponse;
 
 class MyAccountResponseTest extends TestCase
 {
