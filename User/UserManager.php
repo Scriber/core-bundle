@@ -2,6 +2,9 @@
 namespace Scriber\Bundle\CoreBundle\User;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NoResultException;
+use Happyr\DoctrineSpecification\Filter\Equals;
+use Happyr\DoctrineSpecification\Result\AsSingleScalar;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
 use Scriber\Bundle\CoreBundle\User\Data\CreateData;
@@ -39,12 +42,13 @@ class UserManager
      */
     public function getUser(string $email): User
     {
-        $user = $this->em->getRepository(User::class)
-            ->findOneBy([
-                'email' => $email
-            ]);
-
-        if (!$user) {
+        try {
+            return $this->em
+                ->getRepository(User::class)
+                ->matchSingleResult(
+                    new Equals('email', $email)
+                );
+        } catch (NoResultException $e) {
             throw new UserNotFoundException(
                 sprintf(
                     'Could not find user with e-mail %s',
@@ -52,8 +56,6 @@ class UserManager
                 )
             );
         }
-
-        return $user;
     }
 
     /**

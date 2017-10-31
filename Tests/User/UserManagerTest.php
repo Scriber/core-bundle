@@ -2,7 +2,9 @@
 namespace Scriber\Bundle\CoreBundle\Tests\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NoResultException;
+use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Filter\Equals;
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
@@ -52,13 +54,11 @@ class UserManagerTest extends TestCase
         $user = $this->createMock(User::class);
         $email = 'test@example.com';
 
-        $repository = $this->createMock(EntityRepository::class);
+        $repository = $this->createMock(EntitySpecificationRepository::class);
         $repository
             ->expects(static::once())
-            ->method('findOneBy')
-            ->with([
-                'email' => $email
-            ])
+            ->method('matchSingleResult')
+            ->with(static::isInstanceOf(Equals::class), null)
             ->willReturn($user);
 
         $this->em
@@ -77,14 +77,11 @@ class UserManagerTest extends TestCase
     {
         $email = 'test@example.com';
 
-        $repository = $this->createMock(EntityRepository::class);
+        $repository = $this->createMock(EntitySpecificationRepository::class);
         $repository
             ->expects(static::once())
-            ->method('findOneBy')
-            ->with([
-                'email' => $email
-            ])
-            ->willReturn(null);
+            ->method('matchSingleResult')
+            ->willThrowException(new NoResultException());
 
         $this->em
             ->expects(static::once())
@@ -104,13 +101,11 @@ class UserManagerTest extends TestCase
 
         $user = $this->createMock(User::class);
 
-        $repository = $this->createMock(EntityRepository::class);
+        $repository = $this->createMock(EntitySpecificationRepository::class);
         $repository
             ->expects(static::once())
-            ->method('findOneBy')
-            ->with([
-                'email' => $email
-            ])
+            ->method('matchSingleResult')
+            ->with(static::isInstanceOf(Equals::class), null)
             ->willReturn($user);
 
         $this->em
@@ -129,14 +124,11 @@ class UserManagerTest extends TestCase
     {
         $email = 'test@example.com';
 
-        $repository = $this->createMock(EntityRepository::class);
+        $repository = $this->createMock(EntitySpecificationRepository::class);
         $repository
             ->expects(static::once())
-            ->method('findOneBy')
-            ->with([
-                'email' => $email
-            ])
-            ->willReturn(null);
+            ->method('matchSingleResult')
+            ->willThrowException(new NoResultException());
 
         $this->em
             ->expects(static::once())

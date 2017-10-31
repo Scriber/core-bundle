@@ -27,7 +27,8 @@
         "symfony/validator": "^4.0",
         "symfony/security-bundle": "^4.0",
         "rzeka/data-handler-bundle": "^1.1",
-        "lexik/jwt-authentication-bundle": "^2.0"
+        "lexik/jwt-authentication-bundle": "^2.0",
+        "happyr/doctrine-specification": "^0.7.2"
     },
     "repositories": [
         {
