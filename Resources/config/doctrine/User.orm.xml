@@ -4,7 +4,7 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
         http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Scriber\Bundle\CoreBundle\Entity\User" table="user">
+    <entity name="Scriber\Bundle\CoreBundle\Entity\User" table="user" repository-class="Happyr\DoctrineSpecification\EntitySpecificationRepository">
         <indexes>
             <index columns="email" />
         </indexes>
