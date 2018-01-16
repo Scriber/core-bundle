@@ -4,13 +4,6 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services
          http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-        <!-- auth -->
-        <service id="scriber_core.controller.admin_auth_refresh" class="Scriber\Bundle\CoreBundle\Controller\Admin\Auth\RefreshController" public="true">
-            <argument type="service" id="scriber_core.admin_user_provider" />
-            <argument type="service" id="security.token_storage" />
-            <argument type="service" id="lexik_jwt_authentication.handler.authentication_success" />
-        </service>
-
         <!-- my account -->
         <service id="scriber_core.controller.admin_myaccount" class="Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount\IndexController" public="true">
             <argument type="service" id="scriber_core.user_manager" />
@@ -21,7 +14,6 @@
             <argument type="service" id="scriber_core.user_manager" />
             <argument type="service" id="rzeka_data_handler.api_handler" />
             <argument type="service" id="security.token_storage" />
-            <argument type="service" id="lexik_jwt_authentication.jwt_manager" />
         </service>
 
         <service id="scriber_core.controller.admin_myaccount_password" class="Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount\PasswordController" public="true">

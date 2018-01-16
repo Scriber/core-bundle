@@ -4,8 +4,6 @@ namespace Scriber\Bundle\CoreBundle\Tests\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Config\Definition\Processor;
 
 class ConfigurationTest extends TestCase
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Scriber\Bundle\CoreBundle\Tests\User\Response\MyAccount;
+namespace Scriber\Bundle\CoreBundle\Tests\Controller\Admin\MyAccount;
 
 use PHPUnit\Framework\TestCase;
 use Rzeka\DataHandler\DataHandlerResult;
