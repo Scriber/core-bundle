@@ -11,6 +11,7 @@ use Scriber\Bundle\CoreBundle\User\Data\ChangePasswordData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -192,5 +193,33 @@ class PasswordControllerTest extends TestCase
 
         $result = $controller($request);
         static::assertEquals($expectedResult, $result);
+    }
+
+    public function testInvokeNotLoggedIn()
+    {
+        $token = $this->createMock(TokenInterface::class);
+        $request = $this->createMock(Request::class);
+
+        $this->tokenStorage
+            ->expects(static::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $token
+            ->expects(static::once())
+            ->method('getUser')
+            ->willReturn('');
+
+        $this->manager
+            ->expects(static::never())
+            ->method('getUser');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $controller = new PasswordController(
+            $this->manager,
+            $this->apiHandler,
+            $this->tokenStorage
+        );
+        $controller($request);
     }
 }

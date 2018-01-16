@@ -7,6 +7,7 @@ use Scriber\Bundle\CoreBundle\Entity\User;
 use Scriber\Bundle\CoreBundle\Http\JsonResponseData;
 use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\UserManager;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -95,5 +96,28 @@ class IndexControllerTest extends TestCase
         static::assertEquals($expectedResult, $result->getData());
         static::assertEquals(200, $result->getStatus());
         static::assertEmpty($result->getHeaders());
+    }
+
+    public function testInvokeNotLoggedIn()
+    {
+        $token = $this->createMock(TokenInterface::class);
+
+        $this->tokenStorage
+            ->expects(static::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $token
+            ->expects(static::once())
+            ->method('getUser')
+            ->willReturn('');
+
+        $this->manager
+            ->expects(static::never())
+            ->method('getUser');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $controller = new IndexController($this->manager, $this->tokenStorage);
+        $controller();
     }
 }

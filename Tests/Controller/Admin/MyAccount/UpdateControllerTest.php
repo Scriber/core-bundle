@@ -12,6 +12,7 @@ use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -213,5 +214,33 @@ class UpdateControllerTest extends TestCase
 
         static::assertInstanceOf(UnprocessableEntityJsonResponseData::class, $result);
         static::assertEquals($errors, $result->getData());
+    }
+
+    public function testInvokeNotLoggedIn()
+    {
+        $token = $this->createMock(TokenInterface::class);
+        $request = $this->createMock(Request::class);
+
+        $this->tokenStorage
+            ->expects(static::once())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $token
+            ->expects(static::once())
+            ->method('getUser')
+            ->willReturn('');
+
+        $this->manager
+            ->expects(static::never())
+            ->method('getUser');
+
+        $this->expectException(AccessDeniedHttpException::class);
+        $controller = new UpdateController(
+            $this->manager,
+            $this->apiHandler,
+            $this->tokenStorage
+        );
+        $controller($request);
     }
 }

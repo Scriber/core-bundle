@@ -2,10 +2,12 @@
 namespace Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount;
 
 use Rzeka\DataHandlerBundle\Api\ApiHandler;
+use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\Data\ChangePasswordData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class PasswordController
@@ -46,6 +48,9 @@ class PasswordController
     public function __invoke(Request $request): Response
     {
         $securityUser = $this->tokenStorage->getToken()->getUser();
+        if (!$securityUser instanceof SecurityUser) {
+            throw new AccessDeniedHttpException();
+        }
         $user = $this->manager->getUser($securityUser->getUsername());
 
         $data = new ChangePasswordData();
