@@ -14,14 +14,6 @@
             <argument type="service" id="scriber_core.user_manager" />
         </service>
 
-        <service id="scriber_core.event.authentication_success_listener"
-                 class="Scriber\Bundle\CoreBundle\EventListener\AuthenticationSuccessEventListener">
-            <argument type="service" id="scriber_core.user_manager" />
-            <tag name="kernel.event_listener"
-                 event="lexik_jwt_authentication.on_authentication_success"
-                 method="onAuthenticationSuccessResponse" />
-        </service>
-
         <!-- commands -->
         <service id="scriber_core.command.user_add" class="Scriber\Bundle\CoreBundle\Command\UserAddCommand">
             <argument type="service" id="scriber_core.user_manager" />
