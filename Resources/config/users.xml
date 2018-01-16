@@ -5,21 +5,14 @@
          http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="scriber_core.user_manager" class="Scriber\Bundle\CoreBundle\User\UserManager">
-            <argument type="service" id="doctrine.orm.entity_manager.abstract" />
+            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
             <argument type="service" id="security.encoder_factory.generic" />
+            <argument type="service" id="event_dispatcher" />
         </service>
 
         <!-- security -->
         <service id="scriber_core.admin_user_provider" class="Scriber\Bundle\CoreBundle\Security\UserFactory">
             <argument type="service" id="scriber_core.user_manager" />
-        </service>
-
-        <service id="scriber_core.event.authentication_success_listener"
-                 class="Scriber\Bundle\CoreBundle\EventListener\AuthenticationSuccessEventListener">
-            <argument type="service" id="scriber_core.user_manager" />
-            <tag name="kernel.event_listener"
-                 event="lexik_jwt_authentication.on_authentication_success"
-                 method="onAuthenticationSuccessResponse" />
         </service>
 
         <!-- commands -->
