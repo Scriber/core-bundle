@@ -5,7 +5,7 @@
          http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="scriber_core.user_manager" class="Scriber\Bundle\CoreBundle\User\UserManager">
-            <argument type="service" id="Doctrine\ORM\EntityManagerInterface" />
+            <argument type="service" id="doctrine.orm.entity_manager.abstract" />
             <argument type="service" id="security.encoder_factory.generic" />
         </service>
 

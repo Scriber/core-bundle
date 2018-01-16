@@ -56,7 +56,7 @@ class SecurityUserTest extends TestCase
         $securityUser = new SecurityUser($user);
 
         static::assertInstanceOf(EncoderAwareInterface::class, $securityUser);
-        static::assertEquals('scriber_core.admin', $securityUser->getEncoderName());
+        static::assertEquals('scriber', $securityUser->getEncoderName());
     }
 
     private function getUserMock()
