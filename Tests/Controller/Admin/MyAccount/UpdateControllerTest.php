@@ -1,18 +1,17 @@
 <?php
-namespace Scriber\Bundle\CoreBundle\Tests\User\Response\MyAccount;
+namespace Scriber\Bundle\CoreBundle\Tests\Controller\Admin\MyAccount;
 
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Rzeka\DataHandler\DataHandlerResult;
 use Rzeka\DataHandlerBundle\Api\ApiHandler;
 use Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount\UpdateController;
 use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\Http\JsonResponseData;
+use Scriber\Bundle\CoreBundle\Http\UnprocessableEntityJsonResponseData;
 use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -33,17 +32,11 @@ class UpdateControllerTest extends TestCase
      */
     private $tokenStorage;
 
-    /**
-     * @var JWTTokenManagerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $jwtManager;
-
     public function setUp()
     {
         $this->manager = $this->createMock(UserManager::class);
         $this->apiHandler = $this->createMock(ApiHandler::class);
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
-        $this->jwtManager = $this->createMock(JWTTokenManagerInterface::class);
     }
 
     public function tearDown()
@@ -51,14 +44,19 @@ class UpdateControllerTest extends TestCase
         $this->manager = null;
         $this->apiHandler = null;
         $this->tokenStorage = null;
-        $this->jwtManager = null;
     }
 
     public function testInvoke()
     {
         $email = 'test@example.com';
-        $jwtToken = 'test';
-        $expectedResult = ['token' => $jwtToken];
+        $name = 'John Doe';
+        $roles = ['TEST'];
+
+        $expectedResult = [
+            'email' => $email,
+            'name' => $name,
+            'roles' => $roles,
+        ];
 
         $token = $this->createMock(TokenInterface::class);
         $securityUser = $this->createMock(SecurityUser::class);
@@ -113,14 +111,17 @@ class UpdateControllerTest extends TestCase
             ->method('updateUser')
             ->with($dataValidator);
 
-        $this->jwtManager
-            ->expects(static::once())
-            ->method('create')
-            ->with(static::callback(function ($v) use ($user) {
-                return $v instanceof SecurityUser &&
-                       $v->getUsername() === $user->getEmail();
-            }))
-            ->willReturn($jwtToken);
+        $user
+            ->method('getEmail')
+            ->willReturn($email);
+
+        $user
+            ->method('getName')
+            ->willReturn($name);
+
+        $user
+            ->method('getRoles')
+            ->willReturn($roles);
 
         $this->apiHandler
             ->expects(static::never())
@@ -129,24 +130,21 @@ class UpdateControllerTest extends TestCase
         $controller = new UpdateController(
             $this->manager,
             $this->apiHandler,
-            $this->tokenStorage,
-            $this->jwtManager
+            $this->tokenStorage
         );
 
         $result = $controller($request);
 
-        static::assertInstanceOf(JsonResponse::class, $result);
-        static::assertJson($result->getContent());
-
-        $decodedJson = json_decode($result->getContent(), true);
-
-        static::assertEquals($expectedResult, $decodedJson);
+        static::assertInstanceOf(JsonResponseData::class, $result);
+        static::assertEquals($expectedResult, $result->getData());
+        static::assertEquals(200, $result->getStatus());
+        static::assertEmpty($result->getHeaders());
     }
 
     public function testInvokeWithError()
     {
         $email = 'test@example.com';
-        $expectedResponse = $this->createMock(Response::class);
+        $errors = ['errors'];
 
         $token = $this->createMock(TokenInterface::class);
         $securityUser = $this->createMock(SecurityUser::class);
@@ -200,25 +198,20 @@ class UpdateControllerTest extends TestCase
             ->expects(static::never())
             ->method('updateUser');
 
-        $this->jwtManager
-            ->expects(static::never())
-            ->method('create');
-
-        $this->apiHandler
+        $handlerResult
             ->expects(static::once())
-            ->method('getResponseFromResult')
-            ->with($handlerResult)
-            ->willReturn($expectedResponse);
+            ->method('getErrors')
+            ->willReturn($errors);
 
         $controller = new UpdateController(
             $this->manager,
             $this->apiHandler,
-            $this->tokenStorage,
-            $this->jwtManager
+            $this->tokenStorage
         );
 
         $result = $controller($request);
 
-        static::assertEquals($expectedResponse, $result);
+        static::assertInstanceOf(UnprocessableEntityJsonResponseData::class, $result);
+        static::assertEquals($errors, $result->getData());
     }
 }

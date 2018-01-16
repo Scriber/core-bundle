@@ -7,6 +7,8 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 class SecurityUser implements AdvancedUserInterface, \Serializable, EncoderAwareInterface
 {
+    const ENCODER = 'scriber';
+
     /**
      * @var string
      */
@@ -131,7 +133,6 @@ class SecurityUser implements AdvancedUserInterface, \Serializable, EncoderAware
      */
     public function getEncoderName(): string
     {
-        return 'scriber_core.admin';
+        return self::ENCODER;
     }
-
 }

@@ -9,11 +9,11 @@
         <default key="_controller">scriber_core.controller.admin_myaccount</default>
     </route>
 
-    <route id="scriber_core_admin_account_update" path="/me" methods="POST|PATCH">
+    <route id="scriber_core_admin_myaccount_update" path="/my-account" methods="PUT">
         <default key="_controller">scriber_core.controller.admin_myaccount_update</default>
     </route>
 
-    <route id="scriber_core_admin_account_password" path="/me/password" methods="POST">
+    <route id="scriber_core_admin_myaccount_password" path="/my-account/password" methods="PUT">
         <default key="_controller">scriber_core.controller.admin_myaccount_password</default>
     </route>
 </routes>

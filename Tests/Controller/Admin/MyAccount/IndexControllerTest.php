@@ -1,12 +1,12 @@
 <?php
-namespace Scriber\Bundle\CoreBundle\Tests\Controller\Auth;
+namespace Scriber\Bundle\CoreBundle\Tests\Controller\Admin\MyAccount;
 
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount\IndexController;
 use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\Http\JsonResponseData;
 use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -90,12 +90,10 @@ class IndexControllerTest extends TestCase
 
         $controller = new IndexController($this->manager, $this->tokenStorage);
         $result = $controller();
-        $resultString = $result->getContent();
 
-        static::assertInstanceOf(JsonResponse::class, $result);
-        static::assertJson($resultString);
-
-        $resultArray = json_decode($resultString, true);
-        static::assertEquals($expectedResult, $resultArray);
+        static::assertInstanceOf(JsonResponseData::class, $result);
+        static::assertEquals($expectedResult, $result->getData());
+        static::assertEquals(200, $result->getStatus());
+        static::assertEmpty($result->getHeaders());
     }
 }

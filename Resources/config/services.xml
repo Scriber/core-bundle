@@ -4,6 +4,10 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services
          http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
+        <service class="Scriber\Bundle\CoreBundle\EventListener\KernelViewJsonResponseDataListener" id="scriber_core.event_listener.kernel_view_json_response_data_listener">
+            <tag name="kernel.event_listener" event="kernel.view" method="onKernelView" />
+        </service>
+
         <service class="Scriber\Bundle\CoreBundle\Validator\Constraints\UserEmailExistsValidator" id="scriber_core.validator.user_email_exists">
             <argument type="service" id="scriber_core.user_manager" />
             <tag name="validator.constraint_validator" />

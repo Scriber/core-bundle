@@ -4,7 +4,6 @@ namespace Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount;
 use Rzeka\DataHandlerBundle\Api\ApiHandler;
 use Scriber\Bundle\CoreBundle\User\Data\ChangePasswordData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -39,7 +38,10 @@ class PasswordController
     }
 
     /**
-     * @return Response|JsonResponse
+     * @param Request $request
+     *
+     * @return Response
+     * @throws \Scriber\Bundle\CoreBundle\Exception\UserNotFoundException
      */
     public function __invoke(Request $request): Response
     {

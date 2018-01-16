@@ -2,13 +2,15 @@
 namespace Scriber\Bundle\CoreBundle\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NoResultException;
+use Happyr\DoctrineSpecification\Exception\NoResultException;
 use Happyr\DoctrineSpecification\Filter\Equals;
-use Happyr\DoctrineSpecification\Result\AsSingleScalar;
 use Scriber\Bundle\CoreBundle\Entity\User;
+use Scriber\Bundle\CoreBundle\Event\User as Event;
 use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
+use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\Data\CreateData;
 use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
@@ -25,29 +27,43 @@ class UserManager
     private $passwordEncoder;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @param EntityManagerInterface $em
      * @param EncoderFactoryInterface $encoderFactory
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EntityManagerInterface $em, EncoderFactoryInterface $encoderFactory)
+    public function __construct(EntityManagerInterface $em, EncoderFactoryInterface $encoderFactory, EventDispatcherInterface $eventDispatcher)
     {
         $this->em = $em;
-        $this->passwordEncoder = $encoderFactory->getEncoder('scriber_core.admin');
+        $this->passwordEncoder = $encoderFactory->getEncoder(SecurityUser::ENCODER);
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * @param string $email
      *
-     * @return User|null
-     * @throws UserNotFoundException
+     * @return User
+     * @throws \Scriber\Bundle\CoreBundle\Exception\UserNotFoundException
      */
     public function getUser(string $email): User
     {
+        $event = new Event\UserGetBeforeEvent($email);
+        $this->eventDispatcher->dispatch(Event\UserGetBeforeEvent::class, $event);
+
         try {
-            return $this->em
+            $user = $this->em
                 ->getRepository(User::class)
                 ->matchSingleResult(
-                    new Equals('email', $email)
+                    new Equals('email', $event->getEmail())
                 );
+
+            $this->eventDispatcher->dispatch(Event\UserGetAfterEvent::class, new Event\UserGetAfterEvent($user));
+
+            return $user;
         } catch (NoResultException $e) {
             throw new UserNotFoundException(
                 sprintf(
@@ -80,11 +96,21 @@ class UserManager
      */
     public function updatePassword(User $user, string $password): void
     {
+        $this->eventDispatcher->dispatch(
+            Event\UserChangePasswordBeforeEvent::class,
+            new Event\UserChangePasswordBeforeEvent($user, $password)
+        );
+
         $user->setPassword(
             $this->passwordEncoder->encodePassword($password, '')
         );
 
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(
+            Event\UserChangePasswordAfterEvent::class,
+            new Event\UserChangePasswordAfterEvent($user, $password)
+        );
     }
 
     /**
@@ -105,10 +131,20 @@ class UserManager
      */
     public function createUser(CreateData $data): User
     {
+        $this->eventDispatcher->dispatch(
+            Event\UserCreateBeforeEvent::class,
+            new Event\UserCreateBeforeEvent($data)
+        );
+
         $user = new User($data->email, $data->name);
 
         $this->em->persist($user);
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(
+            Event\UserCreateAfterEvent::class,
+            new Event\UserCreateAfterEvent($user, $data)
+        );
 
         return $user;
     }
@@ -119,10 +155,21 @@ class UserManager
     public function updateUser(UpdateData $data): void
     {
         $user = $data->getUser();
+
+        $this->eventDispatcher->dispatch(
+            Event\UserUpdateBeforeEvent::class,
+            new Event\UserUpdateBeforeEvent($user, $data)
+        );
+
         $user->setEmail($data->email);
         $user->setName($data->name);
 
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(
+            Event\UserUpdateAfterEvent::class,
+            new Event\UserUpdateAfterEvent($user, $data)
+        );
     }
 
     /**
@@ -131,15 +178,19 @@ class UserManager
      */
     public function updateRoles(User $user, array $roles): void
     {
-        $user->setRoles($roles);
-        $this->em->flush();
-    }
+        $event = new Event\UserUpdateRolesBeforeEvent($user, $roles);
 
-    /**
-     * \EntityManagerInterface::flush forwarder
-     */
-    public function save(): void
-    {
+        $this->eventDispatcher->dispatch(
+            Event\UserUpdateRolesBeforeEvent::class,
+            $event
+        );
+
+        $user->setRoles($event->getRoles());
         $this->em->flush();
+
+        $this->eventDispatcher->dispatch(
+            Event\UserUpdateRolesAfterEvent::class,
+            new Event\UserUpdateRolesAfterEvent($user, $roles)
+        );
     }
 }

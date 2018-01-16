@@ -2,8 +2,8 @@
 namespace Scriber\Bundle\CoreBundle\Tests\User;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NoResultException;
 use Happyr\DoctrineSpecification\EntitySpecificationRepository;
+use Happyr\DoctrineSpecification\Exception\NoResultException;
 use Happyr\DoctrineSpecification\Filter\Equals;
 use PHPUnit\Framework\TestCase;
 use Scriber\Bundle\CoreBundle\Entity\User;
@@ -11,6 +11,7 @@ use Scriber\Bundle\CoreBundle\Exception\UserNotFoundException;
 use Scriber\Bundle\CoreBundle\User\Data\CreateData;
 use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
@@ -31,11 +32,17 @@ class UserManagerTest extends TestCase
      */
     private $passwordEncoder;
 
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $eventDispatcher;
+
     public function setUp()
     {
         $this->em = $this->createMock(EntityManagerInterface::class);
         $this->encoderFactory = $this->createMock(EncoderFactoryInterface::class);
         $this->passwordEncoder = $this->createMock(PasswordEncoderInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->encoderFactory
             ->method('getEncoder')
@@ -67,7 +74,7 @@ class UserManagerTest extends TestCase
             ->with(User::class)
             ->willReturn($repository);
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher, $this->eventDispatcher);
         $result = $manager->getUser($email);
 
         static::assertEquals($user, $result);
@@ -89,7 +96,7 @@ class UserManagerTest extends TestCase
             ->with(User::class)
             ->willReturn($repository);
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
 
         $this->expectException(UserNotFoundException::class);
         $manager->getUser($email);
@@ -114,7 +121,7 @@ class UserManagerTest extends TestCase
             ->with(User::class)
             ->willReturn($repository);
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $result = $manager->userExists($email);
 
         static::assertTrue($result);
@@ -136,7 +143,7 @@ class UserManagerTest extends TestCase
             ->with(User::class)
             ->willReturn($repository);
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $result = $manager->userExists($email);
 
         static::assertFalse($result);
@@ -163,7 +170,7 @@ class UserManagerTest extends TestCase
             ->expects(static::once())
             ->method('flush');
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $manager->updatePassword($user, $password);
     }
 
@@ -178,7 +185,7 @@ class UserManagerTest extends TestCase
             ->with($encodedPassword, $password)
             ->willReturn(true);
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $result = $manager->checkPassword($encodedPassword, $password);
 
         static::assertTrue($result);
@@ -206,7 +213,7 @@ class UserManagerTest extends TestCase
             ->expects(static::once())
             ->method('flush');
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $user = $manager->createUser($data);
 
         static::assertInstanceOf(User::class, $user);
@@ -228,7 +235,7 @@ class UserManagerTest extends TestCase
             ->expects(static::once())
             ->method('flush');
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $manager->updateRoles($user, $roles);
     }
 
@@ -257,17 +264,7 @@ class UserManagerTest extends TestCase
             ->expects(static::once())
             ->method('flush');
 
-        $manager = new UserManager($this->em, $this->encoderFactory);
+        $manager = new UserManager($this->em, $this->encoderFactory, $this->eventDispatcher);
         $manager->updateUser($data);
-    }
-
-    public function testSave()
-    {
-        $this->em
-            ->expects(static::once())
-            ->method('flush');
-
-        $manager = new UserManager($this->em, $this->encoderFactory);
-        $manager->save();
     }
 }
