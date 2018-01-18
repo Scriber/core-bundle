@@ -37,9 +37,44 @@ class KernelViewJsonResponseDataListenerTest extends TestCase
 
     public function testOnKernelViewWithoutModifiers()
     {
+        $jsonResponseData = $this->createMock(JsonResponseData::class);
+        $responseDataData = ['test'];
+        $responseDataStatus = 200;
+        $responseDataHeaders = ['test' => 'test'];
+
+        $this->event
+            ->expects(static::once())
+            ->method('hasResponse')
+            ->willReturn(false);
+
+        $this->event
+            ->expects(static::once())
+            ->method('getControllerResult')
+            ->willReturn($jsonResponseData);
+
         $this->event
             ->expects(static::never())
-            ->method('hasResponse');
+            ->method('getRequest');
+
+        $jsonResponseData
+            ->expects(static::once())
+            ->method('getData')
+            ->willReturn($responseDataData);
+
+        $jsonResponseData
+            ->expects(static::once())
+            ->method('getStatus')
+            ->willReturn($responseDataStatus);
+
+        $jsonResponseData
+            ->expects(static::once())
+            ->method('getHeaders')
+            ->willReturn($responseDataHeaders);
+
+        $this->event
+            ->expects(static::once())
+            ->method('setResponse')
+            ->with(static::callback($this->getSetResponseCallback($responseDataData, $responseDataStatus, $responseDataHeaders)));
 
         $listener = new KernelViewJsonResponseDataListener();
         $listener->onKernelView($this->event);
