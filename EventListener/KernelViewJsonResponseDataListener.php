@@ -23,7 +23,7 @@ class KernelViewJsonResponseDataListener
      */
     public function onKernelView(GetResponseForControllerResultEvent $event): void
     {
-        if (count($this->responseModifiers) === 0 || $event->hasResponse()) {
+        if ($event->hasResponse()) {
             return;
         }
 
@@ -32,11 +32,13 @@ class KernelViewJsonResponseDataListener
             return;
         }
 
-        $controller = $event->getRequest()->attributes->get('_controller', '');
-        if (array_key_exists($controller, $this->responseModifiers)) {
-            /** @var JsonResponseDataModifierInterface $modifier */
-            foreach ($this->responseModifiers[$controller] as $modifier) {
-                $result = $modifier->getModifiedJsonResponseData($result, $controller);
+        if (count($this->responseModifiers) > 0) {
+            $controller = $event->getRequest()->attributes->get('_controller', '');
+            if (array_key_exists($controller, $this->responseModifiers)) {
+                /** @var JsonResponseDataModifierInterface $modifier */
+                foreach ($this->responseModifiers[$controller] as $modifier) {
+                    $result = $modifier->getModifiedJsonResponseData($result, $controller);
+                }
             }
         }
 
