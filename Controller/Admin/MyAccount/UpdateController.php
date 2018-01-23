@@ -4,6 +4,7 @@ namespace Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount;
 use Rzeka\DataHandlerBundle\Api\ApiHandler;
 use Scriber\Bundle\CoreBundle\Http\JsonResponseData;
 use Scriber\Bundle\CoreBundle\Http\UnprocessableEntityJsonResponseData;
+use Scriber\Bundle\CoreBundle\ResponseData\UserData;
 use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\Data\UpdateData;
 use Scriber\Bundle\CoreBundle\User\UserManager;
@@ -62,11 +63,7 @@ class UpdateController
 
         if ($result->isValid()) {
             $this->manager->updateUser($data);
-            return new JsonResponseData([
-                'email' => $user->getEmail(),
-                'name' => $user->getName(),
-                'roles' => $user->getRoles(),
-            ]);
+            return new JsonResponseData(UserData::getArray($user));
         }
 
         return new UnprocessableEntityJsonResponseData($result->getErrors());
