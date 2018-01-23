@@ -5,11 +5,7 @@
         xsi:schemaLocation="http://symfony.com/schema/routing
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <import resource="myaccount.xml">
-        <default key="_format">json</default>
-    </import>
-
-    <import resource="auth.xml">
-        <default key="_format">json</default>
-    </import>
+    <route id="scriber_core_admin_auth_refresh" path="/auth/refresh" methods="GET">
+        <default key="_controller">scriber_core.controller.admin_auth_refresh</default>
+    </route>
 </routes>
