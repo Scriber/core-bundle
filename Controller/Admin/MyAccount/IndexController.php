@@ -2,6 +2,7 @@
 namespace Scriber\Bundle\CoreBundle\Controller\Admin\MyAccount;
 
 use Scriber\Bundle\CoreBundle\Http\JsonResponseData;
+use Scriber\Bundle\CoreBundle\ResponseData\UserData;
 use Scriber\Bundle\CoreBundle\Security\SecurityUser;
 use Scriber\Bundle\CoreBundle\User\UserManager;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -42,10 +43,6 @@ class IndexController
 
         $user = $this->manager->getUser($securityUser->getUsername());
 
-        return new JsonResponseData([
-            'email' => $user->getEmail(),
-            'name' => $user->getName(),
-            'roles' => $user->getRoles(),
-        ]);
+        return new JsonResponseData(UserData::getArray($user));
     }
 }
