@@ -73,7 +73,7 @@ class MenuBuildEventSubscriberTest extends TestCase
         $logoutUrlGenerator
             ->expects(static::once())
             ->method('getLogoutPath')
-            ->willreturn($logoutLink);
+            ->willReturn($logoutLink);
 
         $menu
             ->expects(static::atLeastOnce())
