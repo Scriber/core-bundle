@@ -30,8 +30,8 @@
         "happyr/doctrine-specification": "^0.7.2",
         "lexik/jwt-authentication-bundle": "^2.0"
     },
-    },
     "require-dev": {
-        "phpunit/phpunit": "^6.4"
+        "phpunit/phpunit": "^6.4",
+        "scriber/admin-panel-bundle": "^0.1"
     }
 }
