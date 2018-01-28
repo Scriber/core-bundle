@@ -1,0 +1,6 @@
+{% extends '@ScriberAdminPanel/admin.html.twig' %}
+
+{% block js_footer %}
+    <script src="{{ path('scriber_js_translation_dump', {page: 'admin_my_account', locale: app.request.locale, _format: 'js'}) }}"></script>
+    <script src="{{ asset('scribercore/myaccount.js', 'scriber_core') }}"></script>
+{% endblock %}

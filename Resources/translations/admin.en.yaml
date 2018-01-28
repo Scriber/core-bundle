@@ -1,0 +1,16 @@
+action:
+    logout: Log out
+
+my_account:
+    top_menu:
+        label: My account
+
+    title:
+        account_settings: Account settings
+        change_password: Change password
+
+    form:
+        label:
+            name: Name
+            current_password: Current password
+            new_password: New password

@@ -27,6 +27,14 @@
             <argument type="service" id="scriber_core.security.jwtgenerator" />
             <tag name="twig.extension" />
         </service>
+
+        <service class="Scriber\Bundle\CoreBundle\EventListener\MenuBuildEventSubscriber" id="app.event_listener.menu_build_event_subscriber">
+            <argument type="service" id="translator" />
+            <argument type="service" id="router.default" />
+            <argument type="service" id="security.logout_url_generator" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 
 </container>
