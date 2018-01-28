@@ -17,6 +17,24 @@
             <argument type="service" id="scriber_core.user_manager" />
             <tag name="validator.constraint_validator" />
         </service>
+
+        <service class="Scriber\Bundle\CoreBundle\Security\JWTGenerator" id="scriber_core.security.jwtgenerator">
+            <argument type="service" id="lexik_jwt_authentication.jwt_manager" />
+            <argument type="service" id="security.token_storage" />
+        </service>
+
+        <service class="Scriber\Bundle\CoreBundle\Twig\JWTExtension" id="scriber_core.twig.jwt_extension">
+            <argument type="service" id="scriber_core.security.jwtgenerator" />
+            <tag name="twig.extension" />
+        </service>
+
+        <service class="Scriber\Bundle\CoreBundle\EventListener\MenuBuildEventSubscriber" id="app.event_listener.menu_build_event_subscriber">
+            <argument type="service" id="translator" />
+            <argument type="service" id="router.default" />
+            <argument type="service" id="security.logout_url_generator" />
+
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 
 </container>
