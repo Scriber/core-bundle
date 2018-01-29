@@ -1,0 +1,16 @@
+action:
+    logout: Wyloguj
+
+my_account:
+    top_menu:
+        label: Moje konto
+
+    title:
+        account_settings: Ustawienia konta
+        change_password: Zmień hasło
+
+    form:
+        label:
+            name: Nazwa
+            current_password: Hasło
+            new_password: Nowe hasło
