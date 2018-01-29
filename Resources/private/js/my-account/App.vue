@@ -67,8 +67,8 @@
   export default {
     data() {
       return {
-        user: new $Scriber.form(['email', 'name'], true),
-        password: new $Scriber.form(['password', 'repeat', 'oldPassword'], true),
+        user: new $Scriber.form(['email', 'name'], true, 1500),
+        password: new $Scriber.form(['password', 'repeat', 'oldPassword'], true, 1500),
         dataLoaded: false
       }
     },
